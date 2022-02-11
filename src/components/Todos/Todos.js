@@ -2,7 +2,12 @@ import "./Todos.css";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { addTodo, deleteTodo, markTodoDone } from "../../store/actions/actions";
+import {
+  addTodo,
+  deleteTodo,
+  markTodoDone,
+} from "../../store/actions/todosActions";
+import { searchTodos, clearSearch } from "../../store/actions/searchActions";
 
 import { List, Button, Input } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
@@ -19,6 +24,8 @@ export function Todos() {
   const dispatch = useDispatch();
   const { Search } = Input;
   const items = useSelector((state) => state.todos);
+  const results = useSelector((state) => state.searchResults);
+  // console.log('all', results)
 
   const handleAdd = (text) => {
     dispatch(
@@ -40,21 +47,24 @@ export function Todos() {
   };
 
   const search = (text) => {
-    const textToSearch = new RegExp(text, 'i');
-    const search = items.filter((item) => {
-      if (item.text.search(textToSearch )!== -1 && text!='') {
-        console.log(item);
-      }
-    });
+    // const textToSearch = new RegExp(text, "i");
+    // const search = items.filter((item) => {
+    //   if (item.text.search(textToSearch) !== -1 && text != "") {
+    //     console.log(item);
+    //   }
+    // });
+    dispatch(clearSearch());
+    dispatch(searchTodos({ items, text }));
+    
   };
-
+  console.log("found state", results);
   return (
     <>
       <div className="todosWrap">
         <Search
           placeholder="import search text"
           allowClear
-          enterButton="Add"
+          enterButton="Search"
           size="large"
           onSearch={search}
           //style={style}
@@ -62,7 +72,7 @@ export function Todos() {
         <List
           size="large"
           bordered
-          dataSource={items}
+          dataSource={results.length === 0? items:results}
           renderItem={(item) => (
             <List.Item
               actions={[

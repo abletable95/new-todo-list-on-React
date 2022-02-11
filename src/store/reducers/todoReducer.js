@@ -1,6 +1,6 @@
-import { ADD_TODO } from "../actions/actions";
-import { DELETE_TODO } from "../actions/actions";
-import { MARK_TODO_DONE } from "../actions/actions";
+import { ADD_TODO } from "../actions/todosActions";
+import { DELETE_TODO } from "../actions/todosActions";
+import { MARK_TODO_DONE } from "../actions/todosActions";
 
 const todos = [
   {
