@@ -8,10 +8,9 @@ export const searchTodos = (payload) => {
   };
 };
 
-export const clearSearch = (payload) => {
+export const clearSearch = () => {
   return {
     type: CLEAR_SEARCH,
-    payload,
   };
 };
 
