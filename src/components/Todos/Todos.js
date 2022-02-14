@@ -7,6 +7,7 @@ import {
   deleteTodo,
   markTodoDone,
   filterTodos,
+  GET_TODOS_REQUEST,
 } from "../../store/actions/todosActions";
 import { searchTodos, clearSearch } from "../../store/actions/searchActions";
 
@@ -20,7 +21,7 @@ import {
 import uuid from "react-uuid";
 
 const style = {
-  done: {
+  completed: {
     textDecoration: "line-through",
     background: "rgb(178, 255, 133)",
   },
@@ -47,11 +48,12 @@ export function Todos() {
     dispatch(
       addTodo({
         id: uuid(),
-        text: text,
-        isdone: false,
+        title: text,
+        completed: false,
         important: important,
       })
     );
+    dispatch(filterTodos(filterValue));
     setText("");
   };
 
@@ -69,7 +71,6 @@ export function Todos() {
     dispatch(searchTodos({ items, text }));
   };
 
-  
   const filter = (e) => {
     setFilterValue(e.target.value);
   };
@@ -77,7 +78,13 @@ export function Todos() {
   // setting todos order
   useEffect(() => {
     dispatch(filterTodos(filterValue));
-  }, [filterValue]);
+  }, [filterValue, items.length]);
+
+  const fetch = () => {
+    dispatch({
+      type: GET_TODOS_REQUEST,
+    });
+  };
 
   return (
     <>
@@ -90,10 +97,11 @@ export function Todos() {
           onSearch={search}
           //style={style}
         />
+        <Button onClick={() => fetch()}>Load todos</Button>
         <Radio.Group onChange={filter} value={filterValue}>
           <Radio value="done">Не завершенные</Radio>
           <Radio value="important">Важные</Radio>
-          <Radio value="isDone">Завершенные</Radio>
+          <Radio value="completed">Завершенные</Radio>
         </Radio.Group>
         <List
           size="large"
@@ -112,8 +120,8 @@ export function Todos() {
                 ></Button>,
               ]}
               style={
-                item.isDone
-                  ? style.done
+                item.completed
+                  ? style.completed
                   : null || item.important
                   ? style.important
                   : null
@@ -122,7 +130,7 @@ export function Todos() {
               {item.important ? (
                 <ThunderboltOutlined className="importantIcon" />
               ) : null}
-              {item.text}
+              {item.title}
             </List.Item>
           )}
         />
